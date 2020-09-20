@@ -1033,6 +1033,7 @@ extension Driver {
     // By default, the driver does not link its output. However, this will be updated below.
     var compilerOutputType: FileType? = (driverKind == .interactive ? nil : .object)
     var linkerOutputType: LinkOutputType? = nil
+    let objectLikeFileType: FileType = parsedOptions.getLastArgument(.lto) != nil ? .llvmBitcode : .object
 
     if let outputOption = parsedOptions.getLast(in: .modes) {
       switch outputOption.option {
@@ -1041,11 +1042,11 @@ extension Driver {
           diagnosticsEngine.emit(.error_static_emit_executable_disallowed)
         }
         linkerOutputType = .executable
-        compilerOutputType = .object
+        compilerOutputType = objectLikeFileType
 
       case .emitLibrary:
         linkerOutputType = parsedOptions.hasArgument(.static) ? .staticLibrary : .dynamicLibrary
-        compilerOutputType = .object
+        compilerOutputType = objectLikeFileType
 
       case .emitObject, .c:
         compilerOutputType = .object

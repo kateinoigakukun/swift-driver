@@ -16,6 +16,8 @@ extension Driver {
     // On ELF platforms there's no built in autolinking mechanism, so we
     // pull the info we need from the .o files directly and pass them as an
     // argument input file to the linker.
+    // When performing LTO, compiler output filetype is bitcode and bitcode
+    // supports autolinking mechanism, so don't need autolink extraction.
     // FIXME: Also handle Cygwin and MinGW
     guard inputs.count > 0 && targetTriple.objectFormat == .elf && lto == nil else {
       return nil

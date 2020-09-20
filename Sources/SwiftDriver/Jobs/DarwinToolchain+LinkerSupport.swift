@@ -21,13 +21,6 @@ extension DarwinToolchain {
       .appending(components: "lib", additionalPath)
 
     if fileSystem.exists(path) { return path }
-    return nil
-  }
-
-  internal func findARCLiteLibPath() throws -> AbsolutePath? {
-    if let path = try findXcodeClangLibPath("arc") {
-      return path
-    }
 
     // If we don't have a 'lib/arc/' directory, find the "arclite" library
     // relative to the Clang in the active Xcode.
@@ -35,9 +28,13 @@ extension DarwinToolchain {
       return clangPath
         .parentDirectory // 'clang'
         .parentDirectory // 'bin'
-        .appending(components: "lib", "arc")
+        .appending(components: "lib", additionalPath)
     }
     return nil
+  }
+
+  internal func findARCLiteLibPath() throws -> AbsolutePath? {
+    return try findXcodeClangLibPath("arc")
   }
 
   internal func addLTOLibArgs(to commandLine: inout [Job.ArgTemplate]) throws {

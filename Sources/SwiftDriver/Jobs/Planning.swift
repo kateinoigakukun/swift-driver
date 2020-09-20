@@ -43,7 +43,8 @@ extension Driver {
         switch jobOutput.type {
         case .object, .autolink:
           linkerInputs.append(jobOutput)
-
+        case .llvmBitcode where lto == .llvmThin || lto == .llvmFull:
+          linkerInputs.append(jobOutput)
         case .swiftModule:
           moduleInputsFromJobOutputs.append(jobOutput)
 
@@ -160,7 +161,7 @@ extension Driver {
           addJobOutputs(jobOutputs)
         }
 
-      case .object, .autolink:
+      case .object, .autolink, .llvmBitcode:
         if linkerOutputType != nil {
           linkerInputs.append(input)
         } else {
